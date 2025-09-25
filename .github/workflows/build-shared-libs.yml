@@ -26,7 +26,8 @@ jobs:
         with:
           name: linux-shared-libs
           path: |
-            build/**/*.so
+            build/APCpp-Glue.so
+            build/libpython3.11.so.1.0
 
   build-windows:
     runs-on: windows-latest
@@ -58,4 +59,5 @@ jobs:
         with:
           name: windows-shared-libs
           path: |
-            build/**/*.dll
+            build/APCpp-Glue.dll
+            build/python311.dll
