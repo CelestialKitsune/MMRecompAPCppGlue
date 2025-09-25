@@ -39,6 +39,14 @@ jobs:
           if (!(Test-Path "lib/APCpp/mbedtls-3.4.0.tar.gz")) {
             Invoke-WebRequest -Uri "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.0.tar.gz" -OutFile "lib/APCpp/mbedtls-3.4.0.tar.gz"
           }
+      - name: Extract mbedtls archive
+        run: |
+          if (Test-Path "lib/APCpp/mbedtls-3.4.0.tar.gz") {
+            if (!(Test-Path "build/mbedtls-3.4.0")) {
+              mkdir build | Out-Null
+              tar -xzf lib/APCpp/mbedtls-3.4.0.tar.gz -C build
+            }
+          }
       - name: Configure CMake
         run: cmake -S . -B build
       - name: Build
