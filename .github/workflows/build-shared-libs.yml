@@ -21,6 +21,12 @@ jobs:
         run: cmake --build build --config Release
       - name: List .so files
         run: find build -name "*.so"
+      - name: Upload .so artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-shared-libs
+          path: |
+            build/**/*.so
 
   build-windows:
     runs-on: windows-latest
@@ -36,3 +42,9 @@ jobs:
         run: cmake --build build --config Release
       - name: List .dll files
         run: Get-ChildItem -Recurse -Filter *.dll build
+        - name: Upload .dll artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-shared-libs
+          path: |
+            build/**/*.dll
