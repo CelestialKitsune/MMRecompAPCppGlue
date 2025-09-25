@@ -39,6 +39,8 @@ add_library(APCpp-Glue SHARED
     apcpp-solo-gen.h
 )
 
+set_target_properties(APCpp-Glue PROPERTIES PREFIX "")
+
 target_include_directories(APCpp-Glue PRIVATE lib/APCpp)
 
 if (WIN32)
