@@ -54,6 +54,10 @@ jobs:
         run: cmake --build build --config Release
       - name: List .dll files
         run: Get-ChildItem -Recurse -Filter *.dll build
+      - name: Copy DLLs to build root
+        run: |
+          if (Test-Path "build/Release/APCpp-Glue.dll") { Copy-Item "build/Release/APCpp-Glue.dll" "build/APCpp-Glue.dll" -Force }
+          if (Test-Path "build/Release/python311.dll") { Copy-Item "build/Release/python311.dll" "build/python311.dll" -Force }
       - name: Upload .dll artifacts
         uses: actions/upload-artifact@v4
         with:
