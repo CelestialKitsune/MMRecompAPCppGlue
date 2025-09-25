@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake build-essential
       - name: Configure CMake
-        run: cmake -S . -B build -DBUILD_SHARED_LIBS=ON
+        run: cmake -S . -B build
       - name: Build
         run: cmake --build build --config Release
       - name: List .so files
@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Configure CMake
-        run: cmake -S . -B build -DBUILD_SHARED_LIBS=ON
+        run: cmake -S . -B build
       - name: Build
         run: cmake --build build --config Release
       - name: List .dll files
