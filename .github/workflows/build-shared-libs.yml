@@ -1,0 +1,67 @@
+name: Build Shared Libraries
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - name: Configure CMake
+        run: cmake -S . -B build
+      - name: Build
+        run: cmake --build build --config Release
+      - name: List .so files
+        run: find build -name "*.so"
+      - name: Upload .so artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-shared-libs
+          path: |
+            build/APCpp-Glue.so
+            build/libpython3.11.so.1.0
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Ensure mbedtls archive is present
+        run: |
+          if (!(Test-Path "lib/APCpp/mbedtls-3.4.0.tar.gz")) {
+            Invoke-WebRequest -Uri "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.0.tar.gz" -OutFile "lib/APCpp/mbedtls-3.4.0.tar.gz"
+          }
+      - name: Extract mbedtls archive
+        run: |
+          if (Test-Path "lib/APCpp/mbedtls-3.4.0.tar.gz") {
+            if (!(Test-Path "build/mbedtls-3.4.0")) {
+              mkdir build | Out-Null
+              tar -xzf lib/APCpp/mbedtls-3.4.0.tar.gz -C build
+            }
+          }
+      - name: Configure CMake
+        run: cmake -S . -B build
+      - name: Build
+        run: cmake --build build --config Release
+      - name: List .dll files
+        run: Get-ChildItem -Recurse -Filter *.dll build
+      - name: Copy DLLs to build root
+        run: |
+          if (Test-Path "build/Release/APCpp-Glue.dll") { Copy-Item "build/Release/APCpp-Glue.dll" "build/APCpp-Glue.dll" -Force }
+          if (Test-Path "build/Release/python311.dll") { Copy-Item "build/Release/python311.dll" "build/python311.dll" -Force }
+      - name: Upload .dll artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-shared-libs
+          path: |
+            build/APCpp-Glue.dll
+            build/python311.dll
